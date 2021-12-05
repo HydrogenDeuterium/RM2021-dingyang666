@@ -72,11 +72,11 @@ class Chassis:
 
 # 云台
 class Pan(Gun, Camera):
-    def __init__(self, horizontal_servo, vertical_servo):
+    def __init__(self):
         # 水平和垂直方向的舵机
         super().__init__()
-        self.__h_servo: Servo = horizontal_servo
-        self.__v_servo: Servo = vertical_servo
+        self.__h_servo: Servo = Servo(12, min_ratio=2, max_ratio=12.5)
+        self.__v_servo: Servo = Servo(11, min_ratio=5, max_ratio=15)
     
     # 默认射击
     def __shoot(self, tags):
@@ -134,7 +134,7 @@ class Pan(Gun, Camera):
 
 class Car(Chassis, Pan):
     def __init__(self):
-        super().__init__
+        super().__init__()
 
 
 if __name__ == '__main__':

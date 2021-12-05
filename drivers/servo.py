@@ -30,6 +30,7 @@ class Servo:
         time.sleep(1)
         pwm.stop()
         print('结束pwm')
+        self.angle_now = angle
         return angle
     
     def get(self):
@@ -37,9 +38,9 @@ class Servo:
 
 
 if __name__ == '__main__':
-    servo_v = Servo(11, min_ratio=5, max_ratio=12)
+    servo_v = Servo(12, min_ratio=2, max_ratio=12.5)
     
-    for i in range(1, 181, 15):
+    for i in range(0, 182, 5):
         print(f'Set to {i}')
         servo_v.set(i)
         time.sleep(1)
