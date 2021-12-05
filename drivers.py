@@ -9,11 +9,13 @@ from typing import List
 
 GPIO.setmode(GPIO.BOARD)
 
+print('import finisheds')
+
 
 # 电机
 class Motor:
     def __init__(self, pin):
-        self.ping = pin
+        self.pin = pin
     
     def start_rotate(self):
         """设置正车"""
@@ -33,8 +35,10 @@ class Motor:
 class Servo:
     angle_now: int
     
-    def __init__(self, pin, min_degree, min_ratio, max_degree, max_ratio):
+    def __init__(self, pin, min_degree=0, min_ratio=0.05, max_degree=180, max_ratio=0.1):
         self.__pin = pin
+        GPIO.setup(self.__pin, GPIO.OUT)
+        
         # 最小角度和此时 pwm 占空比时间
         self.__min_degree = min_degree
         self.__min_ratio = min_ratio
@@ -48,9 +52,11 @@ class Servo:
         pwm = GPIO.PWM(self.__pin, 50)
         
         duty_ratio = (angle - self.__min_degree) / self.__degree_range * self.__ratio_range + self.__min_ratio
+        print('开始pwm')
         pwm.start(duty_ratio)
         time.sleep(1)
         pwm.stop()
+        print('结束pwm')
         return angle
     
     def get(self):
@@ -71,12 +77,16 @@ class Gun:
 class Camera:
     def __init__(self):
         self.__detector = Detector()
+        self.capture = cv2.VideoCapture(0)
     
     # 拍照
-    @staticmethod
-    def __get_photo():
-        os.system('libcamera-jpeg -o tmp.jpg')
-        return cv2.imread('tmp.jpg', cv2.IMREAD_GRAYSCALE)
+    def __get_photo(self):
+        # os.system('libcamera-jpeg -o tmp.jpg')
+        # return cv2.imread('tmp.jpg', cv2.IMREAD_GRAYSCALE)
+        ret, cap = self.capture.read()
+        assert ret is True
+        cap = cv2.cvtColor(cap, cv2.COLOR_BGR2GRAY)
+        return cap
     
     def __anal_photo(self) -> dict:
         img = self.__get_photo()
@@ -84,7 +94,7 @@ class Camera:
         
         if result:
             img_center = (i / 2 for i in img.shape)
-            return {i.tag_id: (res - img for img, res in zip(img_center, i.center))
+            return {i.tag_id: tuple(res - img for img, res in zip(img_center, i.center))
                     for i in result}
         return {}
 
@@ -209,4 +219,31 @@ class Pan(Gun, Camera):
 
 class Car(Chassis, Pan):
     def __init__(self):
-        super().__init__()
+        super().__init__
+        
+if __name__ == '__main__':
+    print('Hello!')
+    
+    # Camera
+    # t0=time.time_ns()
+    # camera: Camera = Camera()
+    # for i in range(100):
+    #     print(camera._Camera__anal_photo())
+    # t=time.time_ns()
+    # print(f'100次识别总用时 {(t-t0)/1e9} 秒。\n识别速率：{100/(t-t0)*1e9} Hz')
+    
+    servo_v = Servo(11)
+    
+    print('Set to 150')
+    servo_v.set(150)
+    time.sleep(1)
+    
+    print('Set to 90')
+    servo_v.set(90)
+    time.sleep(1)
+    
+    print('Set to 10')
+    servo_v.set(10)
+    time.sleep(1)
+    
+    print('Done')
