@@ -1,3 +1,5 @@
+import time
+
 import apriltag
 from typing import List
 
@@ -28,3 +30,13 @@ class Camera:
             return {i.tag_id: tuple(res - img for img, res in zip(img_center, i.center))
                     for i in result}
         return {}
+
+
+if __name__ == '__main__':
+    # Camera
+    t0 = time.time_ns()
+    camera: Camera = Camera()
+    for i in range(100):
+        print(camera._Camera__anal_photo())
+    t = time.time_ns()
+    print(f'100次识别总用时 {(t - t0) / 1e9} 秒。\n识别速率：{100 / (t - t0) * 1e9} Hz')

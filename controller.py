@@ -10,7 +10,7 @@ from drivers.servo import Servo
 
 GPIO.setmode(GPIO.BOARD)
 
-print('import finisheds')
+print('import finished')
 
 
 # 底盘
@@ -139,12 +139,3 @@ class Car(Chassis, Pan):
 
 if __name__ == '__main__':
     print('Hello!')
-    
-    # Camera
-    # t0=time.time_ns()
-    # camera: Camera = Camera()
-    # for i in range(100):
-    #     print(camera._Camera__anal_photo())
-    # t=time.time_ns()
-    # print(f'100次识别总用时 {(t-t0)/1e9} 秒。\n识别速率：{100/(t-t0)*1e9} Hz')
-    
