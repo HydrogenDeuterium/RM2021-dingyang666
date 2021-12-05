@@ -1,102 +1,16 @@
-import os
 import time
 
-import apriltag
-import cv2
 import RPi.GPIO as GPIO
-from apriltag import Detector
 from typing import List
+
+from drivers.camera import Camera
+from drivers.gun import Gun
+from drivers.Motor import Motor
+from drivers.servo import Servo
 
 GPIO.setmode(GPIO.BOARD)
 
 print('import finisheds')
-
-
-# 电机
-class Motor:
-    def __init__(self, pin):
-        self.pin = pin
-    
-    def start_rotate(self):
-        """设置正车"""
-        # TODO
-        pass
-    
-    def start_rotate_reverse(self):
-        """设置倒车"""
-        pass
-    
-    def stop_rotate(self):
-        """设置停车"""
-        pass
-
-
-# 舵机
-class Servo:
-    angle_now: int
-    
-    def __init__(self, pin, min_degree=0, min_ratio=0.05, max_degree=180, max_ratio=0.1):
-        self.__pin = pin
-        GPIO.setup(self.__pin, GPIO.OUT)
-        
-        # 最小角度和此时 pwm 占空比时间
-        self.__min_degree = min_degree
-        self.__min_ratio = min_ratio
-        # 最大角度和此时 pwm 占空比时间
-        self.__max_degree = max_degree
-        self.__max_ratio = max_ratio
-        self.__degree_range = self.__max_degree - self.__min_degree
-        self.__ratio_range = self.__max_ratio - self.__min_ratio
-    
-    def set(self, angle: int):
-        pwm = GPIO.PWM(self.__pin, 50)
-        
-        duty_ratio = (angle - self.__min_degree) / self.__degree_range * self.__ratio_range + self.__min_ratio
-        print('开始pwm')
-        pwm.start(duty_ratio)
-        time.sleep(1)
-        pwm.stop()
-        print('结束pwm')
-        return angle
-    
-    def get(self):
-        return self.angle_now
-
-
-# 水弹枪
-class Gun:
-    # 水弹枪控制针脚
-    __gun_pin = 7
-    
-    def auto_shoot(self, secs):
-        GPIO.output(self.__gun_pin, GPIO.HIGH)
-        time.sleep(secs)
-        GPIO.output(self.__gun_pin, GPIO.LOW)
-
-
-class Camera:
-    def __init__(self):
-        self.__detector = Detector()
-        self.capture = cv2.VideoCapture(0)
-    
-    # 拍照
-    def __get_photo(self):
-        # os.system('libcamera-jpeg -o tmp.jpg')
-        # return cv2.imread('tmp.jpg', cv2.IMREAD_GRAYSCALE)
-        ret, cap = self.capture.read()
-        assert ret is True
-        cap = cv2.cvtColor(cap, cv2.COLOR_BGR2GRAY)
-        return cap
-    
-    def __anal_photo(self) -> dict:
-        img = self.__get_photo()
-        result: List[apriltag.Detection] = self.__detector.detect(img=img)
-        
-        if result:
-            img_center = (i / 2 for i in img.shape)
-            return {i.tag_id: tuple(res - img for img, res in zip(img_center, i.center))
-                    for i in result}
-        return {}
 
 
 # 底盘
@@ -106,6 +20,7 @@ class Chassis:
         电机控制使用 35-38 针脚
         按照顺序分别为左前右前左后右后
         """
+        # TODO 电机要两根针脚控制
         self.__motor1 = Motor(35)
         self.__motor2 = Motor(36)
         self.__motor3 = Motor(37)
@@ -220,7 +135,8 @@ class Pan(Gun, Camera):
 class Car(Chassis, Pan):
     def __init__(self):
         super().__init__
-        
+
+
 if __name__ == '__main__':
     print('Hello!')
     
@@ -232,18 +148,3 @@ if __name__ == '__main__':
     # t=time.time_ns()
     # print(f'100次识别总用时 {(t-t0)/1e9} 秒。\n识别速率：{100/(t-t0)*1e9} Hz')
     
-    servo_v = Servo(11)
-    
-    print('Set to 150')
-    servo_v.set(150)
-    time.sleep(1)
-    
-    print('Set to 90')
-    servo_v.set(90)
-    time.sleep(1)
-    
-    print('Set to 10')
-    servo_v.set(10)
-    time.sleep(1)
-    
-    print('Done')
