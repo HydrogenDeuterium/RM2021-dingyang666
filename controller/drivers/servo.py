@@ -28,7 +28,7 @@ class Servo:
         pwm = GPIO.PWM(self.__pin, 50)
         now = (self.angle_now - self.__min_degree) / self.__degree_range * self.__ratio_range + self.__min_ratio
         target = (angle - self.__min_degree) / self.__degree_range * self.__ratio_range + self.__min_ratio
-        print('开始pwm')
+        # print('开始pwm')
         pause_time = 0.7
         pwm.start(now)
         # time.sleep(pause_time)
@@ -39,7 +39,7 @@ class Servo:
         pwm.ChangeDutyCycle(target)
         time.sleep(pause_time)
         pwm.stop()
-        print('结束pwm')
+        # print('结束pwm')
         self.angle_now = angle
         return angle
     

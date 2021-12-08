@@ -20,5 +20,5 @@ class Gun:
 
 if __name__ == '__main__':
     print('开始射')
-    Gun().auto_shoot(5)
+    Gun().auto_shoot(3)
     print('射完了')

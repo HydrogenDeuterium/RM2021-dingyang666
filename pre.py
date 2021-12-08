@@ -1,7 +1,7 @@
 """
 预赛脚本
 """
-from drivers import Car
+from controller import Car
 
 tag_seq = [1, 2, 3, 4]
 

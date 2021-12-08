@@ -1,6 +1,8 @@
 """云台"""
 
-from drivers import Camera, Gun, Servo
+from drivers.camera import Camera
+from drivers.servo import Servo
+from drivers.gun import Gun
 
 
 class Pan(Gun):
@@ -10,6 +12,7 @@ class Pan(Gun):
         self.camera = Camera()
         self.h_servo: Servo = Servo(12, min_ratio=2, max_ratio=12.5)
         self.v_servo: Servo = Servo(11, min_ratio=5, max_ratio=15)
+        self.v_servo.set(80)
     
     # 默认射击
     def __shoot(self, tags):
@@ -31,12 +34,12 @@ class Pan(Gun):
     
     # 搜索目标
     def __scan_target(self, target_id):
-        if target_id in self.camera.anal_photo():
+        if target_id in self.camera.auto_anal():
             print('不用找直接就是了')
             return
         for l_angle in range(0, 180, 25):
             self.h_servo.set(l_angle)
-            location_map = self.camera.anal_photo()
+            location_map = self.camera.auto_anal()
             if target_id in location_map:
                 print('已经找到目标')
                 return
@@ -48,12 +51,12 @@ class Pan(Gun):
         
         integrate = [0., 0.]
         last = [0., 0.]
-        kp, ki, kd = -0.02, 0.0, 0.0
+        kp, ki, kd = -0.035, 0.0, 0.0
         
         # 瞄准范围
-        eps = 30
+        eps = 50
         
-        bias = self.camera.anal_photo()[tag_id]
+        bias = self.camera.auto_anal()[tag_id]
         # 到达瞄准范围后则不再瞄准
         while abs(bias[0]) > eps or abs(bias[1]) > eps:
             # 计算积分常量
@@ -65,16 +68,22 @@ class Pan(Gun):
                 kp * bias[0] + ki * integrate[0] + (bias[0] - last[0]) * kd,
                 kp * bias[1] + ki * integrate[1] + (bias[1] - last[1]) * kd
             )
+            print(diff)
+            print()
             # 调整舵机
-            # self.v_servo.set(self.v_servo.get() + diff[0])
-            angle_h = self.h_servo.get() + diff[1]
+            angle_h = self.h_servo.get() + diff[0]
             self.h_servo.set(angle_h)
+            angle_v = self.v_servo.get() + diff[1]
+            self.v_servo.set(angle_v)
             # 保存微分常量
             last = bias
             # 获取调整后的结果
-            bias = self.camera.anal_photo()[tag_id]
+            result = self.camera.auto_anal()
+            bias = result[tag_id]
+        print(bias)
 
 
 if __name__ == '__main__':
     pan = Pan()
     pan.pid_aim(1)
+    print('瞄完了')

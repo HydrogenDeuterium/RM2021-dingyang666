@@ -4,7 +4,7 @@ import time
 
 from typing import List
 
-from drivers import Motor
+from drivers.motor import Motor
 
 
 class Chassis:
