@@ -1,14 +1,11 @@
 import time
 
-import RPi.GPIO as GPIO
 from typing import List
 
 from drivers.camera import Camera
 from drivers.gun import Gun
 from drivers.Motor import Motor
 from drivers.servo import Servo
-
-GPIO.setmode(GPIO.BOARD)
 
 print('import finished')
 
@@ -71,51 +68,61 @@ class Chassis:
 
 
 # 云台
-class Pan(Gun, Camera):
+class Pan(Gun):
     def __init__(self):
         # 水平和垂直方向的舵机
         super().__init__()
-        self.__h_servo: Servo = Servo(12, min_ratio=2, max_ratio=12.5)
-        self.__v_servo: Servo = Servo(11, min_ratio=5, max_ratio=15)
+        self.camera = Camera()
+        self.h_servo: Servo = Servo(12, min_ratio=2, max_ratio=12.5)
+        self.v_servo: Servo = Servo(11, min_ratio=5, max_ratio=15)
     
     # 默认射击
     def __shoot(self, tags):
         for i in tags:
-            self.__pid_aim(i)
+            self.pid_aim(i)
             self.auto_shoot(5)
     
     # 水平方向角度调整
     def __horizontal(self, angle=None):
         if angle:
-            return self.__h_servo.set(angle)
-        return self.__h_servo.get()
+            return self.h_servo.set(angle)
+        return self.h_servo.get()
     
     # 水平方向角度
     def __vertical(self, angle=None):
         if angle:
-            return self.__v_servo.set(angle)
-        return self.__v_servo.get()
+            return self.v_servo.set(angle)
+        return self.v_servo.get()
     
     # 搜索目标
     def __scan_target(self, target_id):
-        for l_angle in range(-90, 90, 30):
-            location_map = self.__anal_photo()
+        if target_id in self.camera.anal_photo():
+            print('不用找直接就是了')
+            return
+        for l_angle in range(0, 180, 25):
+            self.h_servo.set(l_angle)
+            location_map = self.camera.anal_photo()
             if target_id in location_map:
+                print('已经找到目标')
                 return
+        print('你妈的 没找到')
     
-    def __pid_aim(self, tag_id):
+    def pid_aim(self, tag_id):
+        print('搜索目标！')
         self.__scan_target(tag_id)
-        integrate = 0., 0.
-        last = 0., 0.
-        kp, ki, kd = 0.7, 0.01, 0.01
+        
+        integrate = [0., 0.]
+        last = [0., 0.]
+        kp, ki, kd = -0.02, 0.0, 0.0
         
         # 瞄准范围
-        eps = 25
+        eps = 30
         
-        bias = self.__anal_photo()[tag_id]
+        bias = self.camera.anal_photo()[tag_id]
         # 到达瞄准范围后则不再瞄准
-        while bias[0] < eps and bias[1] < eps:
+        while abs(bias[0]) > eps or abs(bias[1]) > eps:
             # 计算积分常量
+            print(bias)
             integrate[0] += bias[0]
             integrate[1] += bias[1]
             # 计算调整值
@@ -124,12 +131,13 @@ class Pan(Gun, Camera):
                 kp * bias[1] + ki * integrate[1] + (bias[1] - last[1]) * kd
             )
             # 调整舵机
-            self.__h_servo.set(self.__h_servo.get() + diff[0])
-            self.__v_servo.set(self.__v_servo.get() + diff[1])
+            # self.v_servo.set(self.v_servo.get() + diff[0])
+            angle_h = self.h_servo.get() + diff[1]
+            self.h_servo.set(angle_h)
             # 保存微分常量
             last = bias
             # 获取调整后的结果
-            bias = self.__anal_photo()[tag_id]
+            bias = self.camera.anal_photo()[tag_id]
 
 
 class Car(Chassis, Pan):
@@ -139,3 +147,5 @@ class Car(Chassis, Pan):
 
 if __name__ == '__main__':
     print('Hello!')
+    pan = Pan()
+    pan.pid_aim(1)
