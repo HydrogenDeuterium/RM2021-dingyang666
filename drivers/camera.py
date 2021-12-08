@@ -11,7 +11,7 @@ class Camera:
     def __init__(self):
         self.__detector = Detector()
         self.capture = cv2.VideoCapture(0)
-        
+    
     def __del__(self):
         self.capture.release()
     
@@ -41,6 +41,6 @@ if __name__ == '__main__':
     t0 = time.time_ns()
     camera: Camera = Camera()
     for i in range(100):
-        print(camera._Camera_anal_photo())
+        print(camera.anal_photo())
     t = time.time_ns()
     print(f'100次识别总用时 {(t - t0) / 1e9} 秒。\n识别速率：{100 / (t - t0) * 1e9} Hz')
