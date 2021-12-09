@@ -1,5 +1,5 @@
-from controller.chassis import Chassis
-from controller.pan import Pan, pan
+from controller.chassisXZq import Chassis
+from controller.pan import Pan
 from controller.drivers.servo import Servo
 
 print('import finished')
