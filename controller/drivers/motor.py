@@ -1,3 +1,4 @@
+"""此文件已经废弃"""
 from RPi import GPIO
 
 

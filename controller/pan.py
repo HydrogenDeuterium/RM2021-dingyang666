@@ -1,8 +1,13 @@
 """云台"""
 
-from drivers.camera import Camera
-from drivers.servo import Servo
-from drivers.gun import Gun
+try:
+    from .drivers.camera import Camera
+    from .drivers.servo import Servo
+    from .drivers.gun import Gun
+except ImportError:
+    from drivers.camera import Camera
+    from drivers.servo import Servo
+    from drivers.gun import Gun
 
 
 class Pan(Gun):
@@ -13,6 +18,7 @@ class Pan(Gun):
         self.h_servo: Servo = Servo(12, min_ratio=2, max_ratio=12.5)
         self.v_servo: Servo = Servo(11, min_ratio=5, max_ratio=15)
         self.v_servo.set(80)
+        # self.v_servo.set(120)
     
     # 默认射击
     def __shoot(self, tags):
@@ -42,12 +48,15 @@ class Pan(Gun):
             location_map = self.camera.auto_anal()
             if target_id in location_map:
                 print('已经找到目标')
-                return
+                return True
         print('你妈的 没找到')
+        return False
     
     def pid_aim(self, tag_id):
         print('搜索目标！')
-        self.__scan_target(tag_id)
+        found = self.__scan_target(tag_id)
+        if not found:
+            self.v_servo.set(80)
         
         integrate = [0., 0.]
         last = [0., 0.]
@@ -85,5 +94,8 @@ class Pan(Gun):
 
 if __name__ == '__main__':
     pan = Pan()
-    pan.pid_aim(1)
+    print("开始")
+    for i in range(0,180,30):
+        pan.h_servo.set(i)
+    # pan.pid_aim(1)
     print('瞄完了')

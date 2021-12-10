@@ -1,7 +1,7 @@
 import time
 
-# from apriltag import Detector
-from pupil_apriltags import Detector
+from apriltag import Detector
+# from pupil_apriltags import Dcetector
 from typing import List
 
 import cv2
@@ -11,6 +11,8 @@ class Camera:
     def __init__(self):
         self.__detector = Detector()
         self.capture = cv2.VideoCapture(0)
+        if self.capture.isOpened is False:
+            self.capture = cv2.VideoCapture(2)
     
     def __del__(self):
         self.capture.release()

@@ -13,12 +13,15 @@ class Gun:
         GPIO.setup(self.__gun_pin, GPIO.OUT)
     
     def auto_shoot(self, secs):
-        GPIO.output(self.__gun_pin, GPIO.HIGH)
+        # GPIO.output(self.__gun_pin, GPIO.HIGH)
+        pwm=GPIO.PWM(self.__gun_pin,50)
+        pwm.start(65)
         time.sleep(secs)
-        GPIO.output(self.__gun_pin, GPIO.LOW)
+        # GPIO.output(self.__gun_pin, GPIO.LOW)
+        pwm.stop()
 
 
 if __name__ == '__main__':
     print('开始射')
-    Gun().auto_shoot(3)
+    Gun().auto_shoot(2.5)
     print('射完了')

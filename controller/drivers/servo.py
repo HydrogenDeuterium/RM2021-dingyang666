@@ -25,11 +25,11 @@ class Servo:
         self.set(self.angle_now)
     
     def set(self, angle: int):
-        pwm = GPIO.PWM(self.__pin, 50)
         now = (self.angle_now - self.__min_degree) / self.__degree_range * self.__ratio_range + self.__min_ratio
         target = (angle - self.__min_degree) / self.__degree_range * self.__ratio_range + self.__min_ratio
         # print('开始pwm')
         pause_time = 0.7
+        pwm = GPIO.PWM(self.__pin, 50)
         pwm.start(now)
         # time.sleep(pause_time)
         # for _ in range(4):
