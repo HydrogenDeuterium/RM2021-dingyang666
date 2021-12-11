@@ -3,7 +3,7 @@ from RPi import GPIO
 
 
 class Motor:
-    def __init__(self, pin1, pin2, ratio_duty=100):
+    def __init__(self, pin1, pin2):
         """正转针脚，倒转针脚，pwm修正率(%)"""
         GPIO.setup(pin2, GPIO.OUT, initial=GPIO.LOW)
         GPIO.setup(pin1, GPIO.OUT, initial=GPIO.LOW)

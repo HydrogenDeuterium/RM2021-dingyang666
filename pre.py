@@ -18,6 +18,7 @@ if __name__ == "__main__":
     car.front(1.5)
     car.left(90)
     car.front(2)
+    # 那一块有点胶带所以转的特别快
     car.right(70)
     car.front(0.5)
     # done

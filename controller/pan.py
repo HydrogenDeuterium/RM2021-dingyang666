@@ -20,30 +20,21 @@ class Pan(Gun):
         self.v_servo.set(80)
         # self.v_servo.set(120)
     
-    # 默认射击
-    def __shoot(self, tags):
-        for i in tags:
-            self.pid_aim(i)
-            self.auto_shoot(5)
-    
-    # 水平方向角度调整
-    def __horizontal(self, angle=None):
-        if angle:
-            return self.h_servo.set(angle)
-        return self.h_servo.get()
-    
-    # 水平方向角度
-    def __vertical(self, angle=None):
-        if angle:
-            return self.v_servo.set(angle)
-        return self.v_servo.get()
+    def scan_shoot(self):
+        self.v_servo.set(80)
+        self.start_shoot()
+        for i in range(70, 140, 5):
+            self.h_servo.set(i)
+        for i in range(140, 70, -5):
+            self.h_servo.set(i)
+        self.stop_shoot()
     
     # 搜索目标
     def __scan_target(self, target_id):
         if target_id in self.camera.auto_anal():
             print('不用找直接就是了')
-            return
-        for l_angle in range(0, 180, 25):
+            return True
+        for l_angle in range(0, 180, 30):
             self.h_servo.set(l_angle)
             location_map = self.camera.auto_anal()
             if target_id in location_map:
@@ -55,47 +46,64 @@ class Pan(Gun):
     def pid_aim(self, tag_id):
         print('搜索目标！')
         found = self.__scan_target(tag_id)
+        # 找不到就扫射
         if not found:
-            self.v_servo.set(80)
+            print('你妈的 找不到 扫你妈的')
+            self.scan_shoot()
+            return
         
-        integrate = [0., 0.]
-        last = [0., 0.]
-        kp, ki, kd = -0.035, 0.0, 0.0
-        
-        # 瞄准范围
-        eps = 50
-        
-        bias = self.camera.auto_anal()[tag_id]
-        # 到达瞄准范围后则不再瞄准
-        while abs(bias[0]) > eps or abs(bias[1]) > eps:
-            # 计算积分常量
+        try:
+            integrate = [0., 0.]
+            last = [0., 0.]
+            kp, ki, kd = -0.035, 0.0, 0.0
+            
+            # 瞄准范围
+            eps = 50
+            
+            bias = self.camera.auto_anal()[tag_id]
+            # 到达瞄准范围后则不再瞄准
+            while abs(bias[0]) > eps or abs(bias[1]) > eps:
+                # 计算积分常量
+                print(bias)
+                integrate[0] += bias[0]
+                integrate[1] += bias[1]
+                # 计算调整值
+                diff = (
+                    kp * bias[0] + ki * integrate[0] + (bias[0] - last[0]) * kd,
+                    kp * bias[1] + ki * integrate[1] + (bias[1] - last[1]) * kd
+                )
+                print(diff)
+                print()
+                # 调整舵机
+                angle_h = self.h_servo.get() + diff[0]
+                self.h_servo.set(angle_h)
+                angle_v = self.v_servo.get() + diff[1]
+                self.v_servo.set(angle_v)
+                # 保存微分常量
+                last = bias
+                # 获取调整后的结果
+                result = self.camera.auto_anal()
+                bias = result[tag_id]
             print(bias)
-            integrate[0] += bias[0]
-            integrate[1] += bias[1]
-            # 计算调整值
-            diff = (
-                kp * bias[0] + ki * integrate[0] + (bias[0] - last[0]) * kd,
-                kp * bias[1] + ki * integrate[1] + (bias[1] - last[1]) * kd
-            )
-            print(diff)
-            print()
-            # 调整舵机
-            angle_h = self.h_servo.get() + diff[0]
-            self.h_servo.set(angle_h)
-            angle_v = self.v_servo.get() + diff[1]
-            self.v_servo.set(angle_v)
-            # 保存微分常量
-            last = bias
-            # 获取调整后的结果
-            result = self.camera.auto_anal()
-            bias = result[tag_id]
-        print(bias)
+        except KeyError:
+            print('你妈的 好像出了点问题 扫他丫的')
+            self.scan_shoot()
+    
+    def smart_shoot(self):
+        # 抖一抖减轻卡弹
+        now = self.v_servo.get()
+        for i in range(3):
+            self.v_servo.set(20)
+            self.v_servo.set(25)
+        self.v_servo.set(now)
+        
+        self.auto_shoot(2)
 
 
 if __name__ == '__main__':
     pan = Pan()
     print("开始")
-    for i in range(0,180,30):
-        pan.h_servo.set(i)
-    # pan.pid_aim(1)
-    print('瞄完了')
+    # pan.scan_shoot()
+    # pan.pid_aim(2)
+    pan.smart_shoot()
+    print('整完了')

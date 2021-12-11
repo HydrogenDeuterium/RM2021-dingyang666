@@ -1,10 +1,10 @@
 import time
 
-from apriltag import Detector
-# from pupil_apriltags import Dcetector
-from typing import List
-
 import cv2
+from apriltag import Detector
+
+
+# from pupil_apriltags import Dcetector
 
 
 class Camera:
@@ -19,18 +19,12 @@ class Camera:
     
     # 拍照
     def __get_photo(self):
-        # os.system('libcamera-jpeg -o tmp.jpg')
-        # return cv2.imread('tmp.jpg', cv2.IMREAD_GRAYSCALE)
         assert self.capture.isOpened() is True
         # 等待0.5秒防止图像抖动导致识别不到图像
         time.sleep(0.5)
         ret, cap = self.capture.read()
         assert ret is True
         cap = cv2.cvtColor(cap, cv2.COLOR_BGR2GRAY)
-        # t = time.time()
-        # filename = f'~/RoboMaster/img/{t}.jpg'
-        # cv2.imwrite(filename, cap)
-        # print(f'文件写入到了{filename}')
         return cap
     
     def auto_anal(self) -> dict:

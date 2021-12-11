@@ -10,15 +10,23 @@ class Gun:
     __gun_pin = 7
     
     def __init__(self):
+        self.pwm = None
         GPIO.setup(self.__gun_pin, GPIO.OUT)
     
     def auto_shoot(self, secs):
         # GPIO.output(self.__gun_pin, GPIO.HIGH)
-        pwm=GPIO.PWM(self.__gun_pin,50)
+        pwm = GPIO.PWM(self.__gun_pin, 50)
         pwm.start(65)
         time.sleep(secs)
         # GPIO.output(self.__gun_pin, GPIO.LOW)
         pwm.stop()
+    
+    def start_shoot(self):
+        self.pwm = GPIO.PWM(self.__gun_pin, 50)
+        self.pwm.start(65)
+    
+    def stop_shoot(self):
+        self.pwm.stop()
 
 
 if __name__ == '__main__':
