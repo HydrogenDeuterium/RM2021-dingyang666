@@ -15,6 +15,7 @@ class Chassis:
         # print('等完了 开始跑')
     
     def __del__(self):
+        self.stop()
         self.serial.close()
     
     def move(self, time_to_run, char: bytes):
