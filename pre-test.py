@@ -1,7 +1,6 @@
 """
 预赛脚本
 """
-import time
 
 from controller import Car
 

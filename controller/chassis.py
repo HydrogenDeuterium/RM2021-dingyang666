@@ -1,6 +1,7 @@
 """底盘"""
 
 import time
+import keyboard
 
 from serial import Serial, SerialException
 

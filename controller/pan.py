@@ -1,16 +1,14 @@
 """云台"""
 import time
 
-from RPi import GPIO
-
 try:
     from .drivers.camera import Camera
-    from .drivers.servo import Servo
-    from .drivers.gun import Gun
+    from car.pan.servo import Servo
+    from car.pan.gun import Gun
 except ImportError:
     from drivers.camera import Camera
-    from drivers.servo import Servo
-    from drivers.gun import Gun
+    from car.pan.servo import Servo
+    from car.pan.gun import Gun
 
 
 class Pan(Gun):
@@ -24,9 +22,9 @@ class Pan(Gun):
     
     def scan_shoot(self):
         with self.shooting(65), self.v_servo.set(90):
-            for i in range(70, 140, 5):
+            for i in range(60, 120, 5):
                 self.h_servo.set_to(i)
-            for i in range(140, 70, -5):
+            for i in range(120, 60, -5):
                 self.h_servo.set_to(i)
     
     # 搜索目标
@@ -82,7 +80,7 @@ class Pan(Gun):
     
     def auto_shoot(self):
         # 抖一抖减轻卡弹
-        now = self.v_servo.get()
+        now = self.v_servo.angle
         for i in range(3):
             with self.v_servo.set(35):
                 time.sleep(0.15)
@@ -99,6 +97,9 @@ class Pan(Gun):
                 self.auto_shoot()
         
         return True
+
+    def pid_aim(self, tag_id):
+        pass
 
 
 if __name__ == '__main__':
