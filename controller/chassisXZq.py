@@ -72,18 +72,22 @@ if __name__ == '__main__':
     while True:
         key = input()
         
-        if key == 'w':
-            print('w')
-            chassis.front(0.2, fast=False)
+        if key == 'W':
+            chassis.front(0.5)
+        elif key == 'w':
+            chassis.front(0.1, fast=False)
+        elif key == 'A':
+            chassis.left(90)
         elif key == 'a':
-            print('a')
-            chassis.left(10, fast=False)
+            chassis.left(15, fast=False)
+        elif key == 'S':
+            chassis.back(0.5)
         elif key == 's':
-            print('s')
-            chassis.back(0.2, fast=False)
+            chassis.back(0.1, fast=False)
+        elif key == 'D':
+            chassis.right(90)
         elif key == 'd':
-            print('d')
-            chassis.right(10, fast=False)
+            chassis.right(15, fast=False)
         elif key == 'q':
             print('q')
             break

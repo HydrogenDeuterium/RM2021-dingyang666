@@ -98,6 +98,7 @@ def c2C():
     car.back()
     car.left()
     car.back(1)
-    
-if __name__=='__main__':
+
+
+if __name__ == '__main__':
     b2B()
