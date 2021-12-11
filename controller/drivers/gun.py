@@ -1,3 +1,4 @@
+import contextlib
 import time
 
 from RPi import GPIO
@@ -10,26 +11,25 @@ class Gun:
     __gun_pin = 7
     
     def __init__(self):
-        self.pwm = None
         GPIO.setup(self.__gun_pin, GPIO.OUT)
     
-    def auto_shoot(self, secs):
-        # GPIO.output(self.__gun_pin, GPIO.HIGH)
+    def __del__(self):
+        GPIO.setup(self.__gun_pin, GPIO.IN)
+    
+    @contextlib.contextmanager
+    def shooting(self, power: int):
+        assert 0 < power < 100
         pwm = GPIO.PWM(self.__gun_pin, 50)
-        pwm.start(65)
-        time.sleep(secs)
-        # GPIO.output(self.__gun_pin, GPIO.LOW)
+        pwm.start(power)
+        yield
         pwm.stop()
     
-    def start_shoot(self):
-        self.pwm = GPIO.PWM(self.__gun_pin, 50)
-        self.pwm.start(90)
-    
-    def stop_shoot(self):
-        self.pwm.stop()
+    def shoot(self, secs=2.0):
+        with self.shooting(power=65):
+            time.sleep(secs)
 
 
 if __name__ == '__main__':
     print('开始射')
-    Gun().auto_shoot(2.5)
+    Gun().shoot(10)
     print('射完了')
