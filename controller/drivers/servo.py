@@ -9,8 +9,8 @@ class Servo:
     angle_now: int
     
     def __init__(self, pin, min_degree=0, min_ratio=0.05, max_degree=180, max_ratio=0.1):
-        self.__pin = pin
-        GPIO.setup(self.__pin, GPIO.OUT)
+        self.pin = pin
+        GPIO.setup(self.pin, GPIO.OUT)
         
         # 最小角度和此时 pwm 占空比时间
         self.__min_degree = min_degree
@@ -24,15 +24,12 @@ class Servo:
         self.angle_now = (self.__min_degree + self.__max_degree) // 2
         self.set(self.angle_now)
     
-    def __del__(self):
-        GPIO.cleanup()
-    
     def set(self, angle: int):
         now = (self.angle_now - self.__min_degree) / self.__degree_range * self.__ratio_range + self.__min_ratio
         target = (angle - self.__min_degree) / self.__degree_range * self.__ratio_range + self.__min_ratio
         # print('开始pwm')
-        pause_time = 0.6
-        pwm = GPIO.PWM(self.__pin, 50)
+        pause_time = 0.5
+        pwm = GPIO.PWM(self.pin, 50)
         pwm.start(now)
         # time.sleep(pause_time)
         # for _ in range(4):
@@ -56,6 +53,6 @@ if __name__ == '__main__':
     for i in range(0, 182, 5):
         print(f'Set to {i}')
         servo_v.set(i)
-        time.sleep(1)
+        # time.sleep(1)
     
     print('Done')

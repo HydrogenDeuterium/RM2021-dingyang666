@@ -1,4 +1,5 @@
 """云台"""
+from RPi import GPIO
 
 try:
     from .drivers.camera import Camera
@@ -20,14 +21,23 @@ class Pan(Gun):
         self.v_servo.set(80)
         # self.v_servo.set(120)
     
+    def __del__(self):
+        GPIO.cleanup()
+    
     def scan_shoot(self):
+        
+        # pwm = GPIO.PWM(self.v_servo.pin, 50)
+        # pwm.start(80)
         self.v_servo.set(80)
         self.start_shoot()
         for i in range(70, 140, 5):
             self.h_servo.set(i)
+            self.v_servo.set(80)
         for i in range(140, 70, -5):
             self.h_servo.set(i)
+            self.v_servo.set(80)
         self.stop_shoot()
+        # pwm.stop()
     
     # 搜索目标
     def __scan_target(self, target_id):
@@ -105,5 +115,6 @@ if __name__ == '__main__':
     print("开始")
     # pan.scan_shoot()
     # pan.pid_aim(2)
-    pan.smart_shoot()
+    # pan.pid_aim(1)
+    # pan.smart_shoot()
     print('整完了')

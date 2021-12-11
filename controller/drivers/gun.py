@@ -23,7 +23,7 @@ class Gun:
     
     def start_shoot(self):
         self.pwm = GPIO.PWM(self.__gun_pin, 50)
-        self.pwm.start(65)
+        self.pwm.start(55)
     
     def stop_shoot(self):
         self.pwm.stop()
