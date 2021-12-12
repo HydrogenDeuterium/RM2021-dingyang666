@@ -64,13 +64,15 @@ def B2A():
 
 
 def b2B():
-    car.back(1)
+    car.back(0.5)
+    car.back(0.5)
     car.right(90)
     car.front(0.5)
     car.left(90)
     car.front(0.5)
-    car.right(90)
-    car.front(1)
+    car.right(0)
+    car.front()
+    car.front()
 
 
 def B2b():
@@ -101,4 +103,5 @@ def c2C():
 
 
 if __name__ == '__main__':
-    b2B()
+    # a2A()
+    B2b()

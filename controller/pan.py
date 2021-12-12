@@ -32,6 +32,7 @@ class Pan(Gun):
         if target_id in self.camera.auto_anal():
             print('不用找直接就是了')
             return True
+        self.v_servo.set(110)
         for l_angle in range(0, 180, 30):
             self.h_servo.set(l_angle)
             location_map = self.camera.auto_anal()

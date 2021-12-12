@@ -32,9 +32,10 @@ class Chassis:
     def front(self, distance_meter=0.5, fast=True):
         print(f'往前{distance_meter}米')
         secs_to_run_per_meter = 0.92 * (1 if fast else 4)
-        time_to_run = distance_meter * secs_to_run_per_meter
         if distance_meter > 0.5:
-            self.front(distance_meter - 0.5)
+            distance_meter-=0.5
+            self.front(distance_meter)
+        time_to_run = distance_meter * secs_to_run_per_meter
         self._move(time_to_run, b'W' if fast else b'w')
         time.sleep(1)
     
@@ -50,12 +51,12 @@ class Chassis:
         time.sleep(1)
     
     def left(self, angle_degree=90., fast=True):
-        sec_to_run_per_degree = 0.0046 * (1 if fast else 4)
+        sec_to_run_per_degree = 0.0041 * (1 if fast else 4)
         time_to_run = angle_degree * sec_to_run_per_degree
         self._move(time_to_run, b'A' if fast else b'a')
     
     def right(self, angle_degree=90., fast=True):
-        sec_to_run_per_degree = 0.0048 * (1 if fast else 4)
+        sec_to_run_per_degree = 0.0042 * (1 if fast else 4)
         time_to_run = angle_degree * sec_to_run_per_degree
         self._move(time_to_run, b'D' if fast else b'd')
     

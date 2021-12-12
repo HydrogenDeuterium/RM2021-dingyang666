@@ -69,19 +69,19 @@ if __name__ == '__main__':
         if key == 'W':
             chassis.front(0.5)
         elif key == 'w':
-            chassis.front(0.15, fast=False)
+            chassis.front(0.2, fast=False)
         elif key == 'A':
             chassis.left(90)
         elif key == 'a':
-            chassis.left(20, fast=False)
+            chassis.left(30, fast=False)
         elif key == 'S':
             chassis.back(0.5)
         elif key == 's':
-            chassis.back(0.15, fast=False)
+            chassis.back(0.2, fast=False)
         elif key == 'D':
             chassis.right(90)
         elif key == 'd':
-            chassis.right(20, fast=False)
+            chassis.right(30, fast=False)
         elif key == 'q':
             break
-        time.sleep(1)
+        time.sleep(0.2)

@@ -26,10 +26,11 @@ class Camera(Detector):
     def auto_anal(self) -> Dict[int, Tuple[float, float]]:
         """自动拍照并分析各标签位置"""
         img = self.get_photo()
+        cv2.imwrite('img.jpg', img)
         result = self.detect(img=img)
         
         if result:
-            img_center = img.shape[1], img.shape[0]
+            img_center = img.shape[1]/2, img.shape[0]/2
             ret = {i_.tag_id: (i_.center[0] - img_center[0],
                                i_.center[1] - img_center[1])
                    for i_ in result}
@@ -41,6 +42,7 @@ if __name__ == '__main__':
     # Camera
     t0 = time.time_ns()
     camera: Camera = Camera()
+    camera.get_photo()
     for i in range(50):
         print(camera.auto_anal())
     t = time.time_ns()

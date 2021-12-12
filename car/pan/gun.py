@@ -10,16 +10,16 @@ class Gun:
     # 水弹枪控制针脚
     
     def __init__(self):
-        self.__gun_pin = 7
-        GPIO.setup(self.__gun_pin, GPIO.OUT)
+        self.gun_pin = 7
+        GPIO.setup(self.gun_pin, GPIO.OUT)
     
     def __del__(self):
-        GPIO.setup(self.__gun_pin, GPIO.IN)
+        GPIO.setup(self.gun_pin, GPIO.IN)
     
     @contextlib.contextmanager
     def shooting(self, power: int):
         assert 0 < power < 100
-        pwm = GPIO.PWM(self.__gun_pin, 50)
+        pwm = GPIO.PWM(self.gun_pin, 50)
         pwm.start(power)
         yield
         pwm.stop()
