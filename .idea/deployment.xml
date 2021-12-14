@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" serverName="pi@pi4:22" remoteFilesAllowedToDisappearOnAutoupload="false">
+  <component name="PublishConfigData" serverName="pi@pi4:22" remoteFilesAllowedToDisappearOnAutoupload="false" showEqualInSync="true" showExcludedInSync="true">
     <serverData>
       <paths name="deuterium@stas-server:22 key">
         <serverdata>

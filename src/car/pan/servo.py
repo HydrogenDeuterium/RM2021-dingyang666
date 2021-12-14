@@ -1,7 +1,11 @@
 import contextlib
+import sys
 import time
 
-from RPi import GPIO as GPIO
+try:
+    from RPi import GPIO as GPIO
+except ImportError:
+    sys.exit(-1)
 
 GPIO.setmode(GPIO.BOARD)
 

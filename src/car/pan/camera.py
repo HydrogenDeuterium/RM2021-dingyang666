@@ -2,7 +2,12 @@ import time
 from typing import Dict, Tuple
 
 import cv2
-from apriltag import Detector
+
+# 小调整
+try:
+    from apriltag import Detector
+except ImportError:
+    from pupil_apriltags import Detector
 
 
 class Camera(Detector):
@@ -30,7 +35,7 @@ class Camera(Detector):
         result = self.detect(img=img)
         
         if result:
-            img_center = img.shape[1]/2, img.shape[0]/2
+            img_center = img.shape[1] / 2, img.shape[0] / 2
             ret = {i_.tag_id: (i_.center[0] - img_center[0],
                                i_.center[1] - img_center[1])
                    for i_ in result}
