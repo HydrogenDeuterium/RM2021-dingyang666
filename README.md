@@ -9,6 +9,8 @@
 
 ![车体照片](./documents/photo.jpg)
 
+<div style="page-break-after:always"></div>
+
 接下来给出车体的供电/控制架构图。
 
 ![架构图](./documents/arch.png)
@@ -20,6 +22,8 @@
 - 圆柱体为供电设备
 - 实心箭头表示信号流向
 - 虚线代表供电来源
+
+<div style="page-break-after:always"></div>
 
 以下给出用到的主要设备与其价格：
 
